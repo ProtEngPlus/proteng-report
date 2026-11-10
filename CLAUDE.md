@@ -11,20 +11,30 @@ with a `CONTEXT.md` that explains its outline, workflow, and current progress.
 1. Ask which deliverable we are working on if it is not clear.
 2. Read that folder's `CONTEXT.md` (e.g. `midterm_proposal/CONTEXT.md`)
    and continue from its "Next steps". Do not redo work marked Done unless asked.
-3. Read only the files in `docs/` that the task needs.
+3. Read `project/overview.md`, then only the other source files the task needs
+   (see section 2).
 
-## 2. Facts come from `docs/`
-`docs/` holds the source documents: course guideline and templates, project
-idea and requirements, meeting notes, advisor feedback, research material.
+## 2. Where facts come from
+Facts live in two places. Never invent facts that are in neither.
 
-- Take every project fact (title, team, problem, objectives, scope, users,
-  tech stack, timeline) from `docs/`. Never invent facts that are not there.
-- `docs/` is read-only. Do not edit, move, or delete files there unless asked.
-- If two docs disagree, prefer the newest one and record the conflict in the
-  deliverable's CONTEXT.md → Open questions.
+| Level | Folder | Holds |
+|---|---|---|
+| Project-wide | `project/` | `overview.md` (title, team, advisors, problem, users, objectives, scope, tech stack), `notes/` (meetings, research). Shared by every deliverable. |
+| Per deliverable | `<deliverable>/docs/` | The official template and rules for that deliverable, its deadline, advisor/committee feedback on it. Used only by that deliverable. |
+
+- Read order: `project/` first, then the current deliverable's `docs/`.
+- If they conflict, `project/` wins; record the conflict in the deliverable's
+  CONTEXT.md → Open questions and ask me.
+- A deliverable never reads another deliverable's `docs/`. If something is
+  needed by more than one deliverable, it belongs in `project/`.
+- When the team changes a project-wide fact (e.g. an objective), update
+  `project/overview.md` first, then every deliverable that uses it.
+- All source files (`project/` and every `docs/`) are read-only unless I ask
+  you to edit them. Exception: you may update `project/overview.md` when I
+  confirm a new or changed fact.
 - If a fact is missing, ask me or write `[TBD: what is missing]`.
-- The official guideline and report templates are in `docs/`. Follow their
-  section order and page limits exactly.
+- Follow the official template in the deliverable's `docs/` exactly:
+  section order and page limits.
 
 ## 3. End of every session (or when I say "wrap up")
 1. Update the deliverable's `CONTEXT.md`: status table, decisions,
@@ -38,16 +48,19 @@ CONTEXT.md, not only in chat.
 ## 4. Repo layout
 ```
 CLAUDE.md                general rules (this file)
-docs/                    source documents = facts (read-only)
+project/                 project-wide facts (shared by all deliverables)
+  overview.md
+  notes/
 midterm_proposal/        Semester 1 proposal
   CONTEXT.md             outline, workflow, progress
+  docs/                  template + feedback for this deliverable (read-only)
   sections/              one .md per template section
   figures/               diagram sources + exports
   references.md          reference list for this deliverable (IEEE)
 ```
 Later deliverables (proposal slides, progress updates, final report, final
-slides) get their own folder with the same pattern. One Markdown file per
-template section; do not merge sections.
+slides) get their own folder with the same pattern, including their own
+`docs/`. One Markdown file per template section; do not merge sections.
 
 ## 5. Writing style (written reports)
 - Formal academic English: clear, concise, grammatically correct.
@@ -96,4 +109,4 @@ template section; do not merge sections.
 - When I give rough Thai notes, turn them into academic English and keep my
   meaning; ask when something is ambiguous instead of guessing.
 - After drafting, report: word count, estimated pages vs target, which
-  docs/ files the facts came from, and any open citations or data.
+  source files the facts came from, and any open citations or data.

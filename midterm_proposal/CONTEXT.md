@@ -1,13 +1,14 @@
 # CONTEXT.md — Midterm proposal (2110488, Semester 1)
 
 Read this before working on the proposal. Update it at the end of every session.
-General rules (facts from `docs/`, style, figures, references) are in the root `CLAUDE.md`.
+General rules (where facts come from, style, figures, references) are in the root `CLAUDE.md`.
+Facts: project-wide ones in `project/overview.md`; proposal-only ones in `midterm_proposal/docs/`.
 
 ## 1. What this deliverable is
 The written CP Capstone Project Proposal, in English with a Thai บทคัดย่อ.
 It is scored on problem definition, problem solving, design, teamwork, ethics,
 and communication, and the project must pass it to continue to Semester 2.
-The official template ("CP Capstone Project Proposal") is in `docs/`.
+The official template ("CP Capstone Project Proposal") is in `midterm_proposal/docs/`.
 
 ## 2. Outline and target length
 Order must match the template exactly. One file per row in `sections/`.
@@ -30,8 +31,10 @@ Order must match the template exactly. One file per row in `sections/`.
 ## 3. Workflow
 Write in this order, because later sections depend on earlier ones:
 
-1. **Collect facts.** Read `docs/`, then list in "Project facts" below what was
-   found and what is still `[TBD]`. Ask me to fill the gaps before drafting.
+1. **Collect facts.** Read `project/overview.md` and `midterm_proposal/docs/`.
+   List every `[TBD]` that the proposal needs (see section 4) and ask me to
+   fill the gaps before drafting. Confirmed project-wide facts go into
+   `project/overview.md`, not into this file.
 2. **Section 1 (Introduction).** It sets the problem and objectives that every
    other section refers to. 1.2 must say why the problem is complex and which
    ≥ 2 sub-disciplines it needs. 1.3 objectives must be measurable.
@@ -41,7 +44,7 @@ Write in this order, because later sections depend on earlier ones:
 4. **Section 3 (Design).** Overview, components, constraints (performance,
    scalability, usability, sustainability), then diagrams in `figures/`.
 5. **Sections 4–7.** Teamwork, timeline, Semester 2 plan, ethics. Roles and
-   timeline must match what `docs/` says about the team.
+   timeline must match the team in `project/overview.md`.
 6. **Abstracts (TH + EN).** Written last, from the finished sections. Pattern:
    problem → importance → objectives → approach → components → tools/methods
    → expected deliverables for Sem 1 and 2 → benefits → 5 keywords.
@@ -58,19 +61,19 @@ Tense: present for the problem and the design, future for what will be built
 
 For each step: draft one section, stop, and wait for my review before moving on.
 
-## 4. Project facts (filled from docs/ — cite the source file)
-| Fact | Value | Source in docs/ |
+## 4. Facts this proposal needs
+Project-wide facts are not copied here; read them from `project/overview.md`.
+Before drafting, check that overview.md has: Thai + English title, team with
+student IDs, main advisor (+ co-advisor), problem, target users, measurable
+objectives, ≥ 2 sub-disciplines, scope, tech stack.
+
+Proposal-only facts (source: `midterm_proposal/docs/`):
+| Fact | Value | Source file |
 |---|---|---|
-| Title (TH) | [TBD] | |
-| Title (EN) | [TBD] | |
-| Team + student IDs | [TBD] | |
-| Advisor / co-advisor | [TBD] | |
-| Problem (1 line) | [TBD] | |
-| Target users | [TBD] | |
-| Objectives | [TBD] | |
-| Sub-disciplines (≥ 2) | [TBD] | |
-| Tech stack | [TBD] | |
-| Deadline | [TBD] | |
+| Submission deadline | [TBD] | |
+| Submission format | Google Doc template → [TBD: PDF? upload where?] | |
+| Presentation date (Thai) | [TBD] | |
+| Advisor feedback received | (none yet) | |
 
 ## 5. Status
 | Section | Status | Words | Notes |
@@ -93,7 +96,7 @@ Status values: Not started / Drafting / Review / Done
 - Reference style: IEEE
 
 ## 7. Next steps
-1. Read `docs/` and fill in section 4 "Project facts".
+1. Read `project/overview.md` and `midterm_proposal/docs/`; check section 4.
 2. Ask me about every `[TBD]`.
 3. Draft 1.1 Background & Motivation and 1.2 Problem Statement.
 
