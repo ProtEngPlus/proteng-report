@@ -70,10 +70,32 @@ objectives, ≥ 2 sub-disciplines, scope, tech stack.
 Proposal-only facts (source: `midterm_proposal/docs/`):
 | Fact | Value | Source file |
 |---|---|---|
-| Submission deadline | [TBD] | |
 | Submission format | Google Doc template → [TBD: PDF? upload where?] | |
-| Presentation date (Thai) | [TBD] | |
 | Advisor feedback received | (none yet) | |
+
+### Official schedule (from the course site, all 2026, group submissions)
+| Assignment | Opens | Due | What it is for us |
+|---|---|---|---|
+| Proposal Submission & Exam Schedule | Nov 9 | **Nov 29** | Submit the proposal report (this folder) [TBD: also pick an exam slot?] |
+| Proposal Defense Presentation | Nov 16 | **Dec 6** | Thai slides + talk → separate deliverable folder, start after Nov 29 |
+| Revised Proposal Report Submission | Nov 16 | **Dec 13** | Revise this report from committee feedback |
+Due times: [TBD — check the clock icon on the course site].
+
+### Working plan (adjust in "Next steps" if we fall behind)
+| Dates | Goal |
+|---|---|
+| Nov 10–12 | Fill `project/overview.md`; resolve every [TBD] in section 4 |
+| Nov 13–16 | Section 1 Introduction + Section 2 Related Work (find real sources) |
+| Nov 17–21 | Section 3 Design + diagrams in `figures/` |
+| Nov 22–24 | Sections 4–7 (Teamwork, Timeline, Sem 2 plan, Ethics) |
+| Nov 25–26 | Thai + English abstracts; full review pass (step 7) |
+| Nov 27–28 | Export to Google Doc, TOC + page numbers, Turnitin; buffer day |
+| Nov 29 | **Submit** |
+| Nov 30–Dec 6 | Defense slides + rehearsal (Thai) |
+| Dec 7–13 | Apply committee feedback → record each change in section 6 Decisions → resubmit Dec 13 |
+
+If a session ends behind this plan, say so in the session log and propose
+what to cut or move.
 
 ## 5. Status
 | Section | Status | Words | Notes |
@@ -96,9 +118,9 @@ Status values: Not started / Drafting / Review / Done
 - Reference style: IEEE
 
 ## 7. Next steps
-1. Read `project/overview.md` and `midterm_proposal/docs/`; check section 4.
-2. Ask me about every `[TBD]`.
-3. Draft 1.1 Background & Motivation and 1.2 Problem Statement.
+1. (by Nov 12) Read `project/overview.md` and `midterm_proposal/docs/`; check section 4.
+2. (by Nov 12) Ask me about every `[TBD]`.
+3. (Nov 13–16) Draft 1.1 Background & Motivation and 1.2 Problem Statement.
 
 ## 8. Open questions / [TBD] / [CITATION NEEDED]
 - (none yet)
