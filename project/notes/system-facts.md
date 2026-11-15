@@ -33,7 +33,7 @@ ProtEngPlus เป็นเว็บแอปสำหรับงาน protein
 | อาจารย์ที่ปรึกษาและเจ้าของ cloud project | เป็นเจ้าของ VM และ GCP project ที่ระบบรันอยู่ และเป็นผู้ให้ requirement ของ feature ชุดใหม่ | `manual-guides-2023/reference/vms.md`, `resources-2026/plan/feature-details.md` |
 | ห้องแล็บปลายทาง (BIOTEC) | เป็นผู้ใช้จริงที่ requirement ตั้งต้นของรุ่นก่อนอ้างถึง | proposal ของรุ่นก่อนใน `resources-2023/` |
 
-ข้อจำกัดที่ควรบอกในรายงาน คือระบบยังไม่มีผู้ใช้จริงนอกทีม ณ 2026-11-10 การใช้งานทั้งหมดที่ผ่านมา
+ข้อจำกัดที่ควรบอกในรายงาน คือระบบยังไม่มีผู้ใช้จริงนอกทีม ณ 2026-11-15 การใช้งานทั้งหมดที่ผ่านมา
 เป็นการทดสอบของทีมเอง
 
 ## 3. สิ่งที่ผู้ใช้ทำได้บนหน้าเว็บ
@@ -140,8 +140,9 @@ assay type กับ Assay Library, evaluation plugin กับ evaluation run, 
 
 อายุของ token ตั้งผ่าน environment variable ค่าเริ่มต้นในโค้ดคือ access token 1 ชั่วโมงและ refresh token
 168 ชั่วโมง (7 วัน) ส่วนที่ตั้งจริงบน dev คือ access token 15 นาทีและ refresh token 168 ชั่วโมง ตาม
-`configs.env` ของ overlay dev ใน devops-k8s ค่า access token ของ production อยู่ใน Sealed Secret
-จึงอ่านจาก repo ไม่ได้ บันทึกของทีมระบุว่ายังเป็น 24 ชั่วโมงจนกว่าจะ release [unverified]
+`configs.env` ของ overlay dev ใน devops-k8s ค่าของ production ยังยาวกว่านี้และจะถูกปรับให้เท่ากับ dev
+ตอน release รอบถัดไป ตัวเลขที่ตั้งไว้จริงอยู่ใน Sealed Secret จึงอ่านจาก repo ไม่ได้
+ถ้ารายงานต้องใช้ค่านี้ให้ถามทีมก่อน
 
 การป้องกันการเดารหัสผ่าน (BLB25) merge เข้า `dev` เมื่อ 2026-11-13 คือ login ของผู้ใช้, login ของ admin
 และ change password นับจำนวนครั้งที่กรอกผิดแยกตามบัญชีไว้ใน collection `auth_attempts` ผิดครบ 5 ครั้ง
