@@ -2,7 +2,7 @@
 
 บันทึกนี้รวบรวมหลักฐานเรื่องการแบ่งงานและกระบวนการทำงานของทีม สำหรับใช้เขียนส่วน teamwork
 ของรายงาน ซึ่งต้องบอกบทบาท ความครอบคลุมของงาน และความสมดุลของภาระงาน ข้อมูลตรวจจาก git history
-เมื่อ 2026-11-10
+เมื่อ 2026-11-15 โดยนับทุก branch ไม่ใช่เฉพาะ branch หลัก จึงรวมงานที่ยังไม่ merge ด้วย
 
 ข้อควรระวังคือ git บอกได้แค่ว่าใคร commit อะไร บอกไม่ได้ว่าใครออกแบบ ใครรีวิว ใครทดสอบ
 หรือใครคุยกับ stakeholder ตัวเลขในหน้านี้จึงใช้เป็นหลักฐานประกอบ ไม่ใช่คำตอบสำเร็จของการแบ่งงาน
@@ -11,27 +11,27 @@
 
 | ชื่อใน git | จำนวน commit (ไม่นับ merge) | repo ที่แตะ |
 | --- | --- | --- |
-| BadLuckZ / Thanagorn Chaiyut | 424 | ทุก repo |
+| BadLuckZ / Thanagorn Chaiyut | 431 | ทุก repo |
 | art1722 | 61 | conductor, frontend, kubeflow, bff |
 | Napongthorn | 13 | kubeflow, conductor, frontend |
 | poongeta | 10 | frontend, conductor, bff |
 | Thanagorn Chaiyut | 2 | manual-guides-2023 |
 
-`ProtengCI` ที่ปรากฏใน `devops-k8s` จำนวน 182 commit เป็นบัญชีของ CI ไม่ใช่คน commit
+`ProtengCI` ที่ปรากฏใน `devops-k8s` จำนวน 191 commit เป็นบัญชีของ CI ไม่ใช่คน commit
 เหล่านั้นคือการอัปเดต image tag อัตโนมัติตอน deploy
 
 ## 2. จำนวน commit แยกตาม repo
 
 | repo | BadLuckZ | art1722 | Napongthorn | poongeta |
 | --- | --- | --- | --- | --- |
-| protengplus-frontend | 77 | 24 | 2 | 5 |
-| proteng-kubeflow | 65 | 7 | 8 | – |
-| proteng-user-mgmt | 55 | – | – | – |
-| devops-k8s | 53 | – | – | – |
-| manual-guides-2023 | 46 | – | – | – |
+| protengplus-frontend | 86 | 24 | 2 | 5 |
+| proteng-kubeflow | 68 | 7 | 8 | – |
+| proteng-user-mgmt | 64 | – | – | – |
+| devops-k8s | 56 | – | – | – |
+| manual-guides-2023 | 54 | – | – | – |
 | devops-infra | 42 | – | – | – |
 | proteng-conductor | 36 | 26 | 3 | 3 |
-| proteng-bff | 24 | 4 | 2 | – |
+| proteng-bff | 25 | 4 | – | 2 |
 
 สิ่งที่ตารางนี้บอกคือภาระงานกระจุกตัวอยู่ที่คนเดียวค่อนข้างมาก และงาน infrastructure ทั้งหมด
 คือ `devops-k8s`, `devops-infra` และเอกสาร มีผู้ดูแลคนเดียว ส่วนงาน feature กระจายอยู่ใน
@@ -48,7 +48,7 @@ conductor กับ frontend ซึ่งมีคนร่วมหลายค
 | BLF1 คุมช่วงตำแหน่งที่ mutate ได้ | Gong |
 | BLF7 Wet-lab Result Loop | Poon |
 
-ชื่อเล่นเหล่านี้น่าจะตรงกับ git handle art1722, Napongthorn และ poongeta ตามลำดับ [unverified]
+ชื่อเล่นเหล่านี้ตรงกับ git handle art1722, Napongthorn และ poongeta ตามลำดับ ซึ่งยืนยันกับทีมแล้ว
 feature ข้ออื่นไม่ได้ระบุผู้รับผิดชอบไว้
 
 ## 4. กระบวนการทำงาน
