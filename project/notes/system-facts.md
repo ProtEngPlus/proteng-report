@@ -1,7 +1,7 @@
 # ProtEngPlus — ข้อเท็จจริงของระบบ
 
 บันทึกนี้รวบรวมว่าระบบคืออะไร ทำอะไรได้ และข้างในประกอบด้วยอะไร เพื่อให้คนที่ไม่เคยเห็น repo
-เขียนรายงานได้โดยไม่ต้องเปิดโค้ด ทุกข้อตรวจกับโค้ดบน branch `dev` เมื่อ 2026-11-10
+เขียนรายงานได้โดยไม่ต้องเปิดโค้ด ทุกข้อตรวจกับโค้ดบน branch `dev` เมื่อ 2026-11-15
 ถ้าข้อใดยืนยันไม่ได้จะกำกับว่า [TBD] หรือ [unverified] ไว้ตรงจุดนั้น
 
 แหล่งที่มาของข้อเท็จจริงในไฟล์นี้คือ repo ของระบบทั้งแปดตัวใน GitHub org ProtEngPlus
@@ -56,7 +56,9 @@ SuccessVerifyEmail, ForgetPassword, SentResetPassword, ResetPassword, ChangePass
    กับค่าจริง
 7. สั่งรัน mutation รอบใหม่หรือสั่งรัน evaluation รอบใหม่จาก job เดิมได้ โดยไม่ต้องสร้าง job ใหม่
 
-ระบบส่งอีเมลแจ้งสถานะให้เมื่อ job จบหรือล้มเหลว ถ้าผู้ใช้เปิดการแจ้งเตือนไว้ตอนสร้าง job
+ระบบส่งอีเมลแจ้งสถานะให้ถ้าผู้ใช้เปิดการแจ้งเตือนไว้ โดยกฎขึ้นกับโหมดการเดินของ job
+ถ้าเป็นโหมด `auto` จะส่งเฉพาะเมื่อ job จบหรือล้มเหลว แต่ถ้าเป็นโหมดทีละขั้นจะส่งหลังจบแต่ละขั้นด้วย
+เพราะผู้ใช้ต้องกลับมาสั่งขั้นถัดไปเอง กฎนี้อยู่ที่ `shouldNotify` ใน proteng-conductor
 
 ## 4. ขั้นตอนของ pipeline
 
@@ -83,7 +85,7 @@ job จะหยุดรอให้ผู้ใช้สั่งเองร�
 
 ## 5. โครงสร้างข้อมูล
 
-ข้อมูลเก็บใน MongoDB แยกเป็น 12 collection ตามที่ปรากฏในโค้ดของ proteng-conductor
+ข้อมูลเก็บใน MongoDB แยกเป็น 13 collection ตามที่ปรากฏในโค้ดของ proteng-conductor
 และ proteng-user-mgmt
 
 | collection | ของ service | เก็บอะไร |
@@ -100,25 +102,29 @@ job จะหยุดรอให้ผู้ใช้สั่งเองร�
 | `users` | user-mgmt | บัญชีผู้ใช้ พร้อม token ยืนยันอีเมล |
 | `admins` | user-mgmt | บัญชีผู้ดูแล |
 | `refresh_tokens` | user-mgmt | refresh token ของ session ที่ยังใช้ได้ |
+| `auth_attempts` | user-mgmt | จำนวนครั้งที่ล็อกอินหรือยืนยันรหัสผ่านผิดต่อหนึ่งบัญชี และเวลาที่ถูกล็อกไว้ถึง |
 
 ไฟล์ขนาดใหญ่ที่แต่ละ stage สร้างขึ้น เช่น representation model และโมเดลทำนาย ไม่ได้เก็บใน MongoDB
 แต่เก็บเป็น artifact ใน Google Cloud Storage โดย MongoDB เก็บเพียงชื่อ bucket และ path
 
 ## 6. API
 
-proteng-bff เป็นประตูเดียวที่หน้าเว็บเรียก และมี route ทั้งหมด 63 เส้นใน `apis/router.go`
+proteng-bff เป็นประตูเดียวที่หน้าเว็บเรียก และมี route ทั้งหมด 64 เส้นใน `apis/router.go`
 แบ่งเป็นสองกลุ่มตาม service ปลายทาง คือ `/proteng-user-mgmt/*` และ `/proteng-conductor/*`
 Swagger ของ bff จึงเป็นเอกสาร API ของทั้งระบบ
 
 กลุ่มงานของ route มีดังนี้ บัญชีผู้ใช้และการยืนยันตัวตน (register, login, refresh, logout,
-forgot password, reset password, change password, send verification, verify email), การจัดการ
+forgot password, ตรวจว่าลิงก์ reset ยังใช้ได้, reset password, change password, send verification,
+verify email), การจัดการ
 ผู้ใช้และผู้ดูแลสำหรับ admin, job (สร้าง แก้ ลบ สั่งรัน และ dashboard), configuration ที่บันทึกไว้,
 mutation และผลของ mutation รวมถึงการ bookmark และ export, experimental result สำหรับผลแล็บจริง,
 assay type กับ Assay Library, evaluation plugin กับ evaluation run, การดาวน์โหลด artifact
 และการดึง sequence จาก UniProt ด้วย UniProt ID
 
-ทุก route ต้องผ่าน `Authenticate()` และ `Authorize(...)` ยกเว้น route ที่ต้องใช้งานได้ก่อนล็อกอิน
-คือ register, login, reset password และ verify email มีข้อยกเว้นหนึ่งจุดที่เป็นช่องโหว่ที่รู้อยู่
+ทุก route ต้องผ่าน `Authenticate()` และเกือบทุกเส้นผ่าน `Authorize(...)` ด้วย ส่วน route ของบัญชีตัวเอง
+(`/me` และ change password) ผ่านแค่ `Authenticate()` route ที่ไม่ต้องล็อกอินมีเฉพาะเส้นที่ต้องใช้งานได้ก่อน
+มี session คือ register, login ทั้งของผู้ใช้และ admin, refresh, logout, forgot password,
+ตรวจลิงก์ reset, reset password, send verification และ verify email มีข้อยกเว้นหนึ่งจุดที่เป็นช่องโหว่ที่รู้อยู่
 คือ `POST /proteng-user-mgmt/admins` ซึ่งยังเปิดอยู่ ดู [work-progress.md](./work-progress.md)
 หัวข้อช่องโหว่ที่ยังไม่ได้ปิด
 
@@ -131,3 +137,17 @@ assay type กับ Assay Library, evaluation plugin กับ evaluation run, 
 ไม่สำเร็จ การเปลี่ยนหรือ reset รหัสผ่านจะ revoke refresh token ทั้งหมดของบัญชีนั้น
 
 กลไกนี้เพิ่งขึ้น branch `dev` เมื่อ 2026-11-03 และยังไม่ได้ปล่อยขึ้น production
+
+อายุของ token ตั้งผ่าน environment variable ค่าเริ่มต้นในโค้ดคือ access token 1 ชั่วโมงและ refresh token
+168 ชั่วโมง (7 วัน) ส่วนที่ตั้งจริงบน dev คือ access token 15 นาทีและ refresh token 168 ชั่วโมง ตาม
+`configs.env` ของ overlay dev ใน devops-k8s ค่า access token ของ production อยู่ใน Sealed Secret
+จึงอ่านจาก repo ไม่ได้ บันทึกของทีมระบุว่ายังเป็น 24 ชั่วโมงจนกว่าจะ release [unverified]
+
+การป้องกันการเดารหัสผ่าน (BLB25) merge เข้า `dev` เมื่อ 2026-11-13 คือ login ของผู้ใช้, login ของ admin
+และ change password นับจำนวนครั้งที่กรอกผิดแยกตามบัญชีไว้ใน collection `auth_attempts` ผิดครบ 5 ครั้ง
+บัญชีนั้นจะถูกล็อกการลองใหม่ 15 นาที โดยระบบตอบ HTTP 429 พร้อมบอกจำนวนวินาทีที่ต้องรอ และตัวนับจะถูกล้าง
+เมื่อกรอกถูก ส่วน forgot password กับการส่งอีเมลยืนยันซ้ำใช้ cooldown 60 วินาทีต่อบัญชีแทน
+
+ลิงก์ reset รหัสผ่านมีอายุ 15 นาที ฐานข้อมูลเก็บ reset token เป็น SHA-256 ไม่ใช่ค่าดิบ
+และเมื่อผู้ใช้เปิดหน้า reset หน้าเว็บจะเรียก route ตรวจลิงก์ก่อน ถ้าลิงก์หมดอายุหรือใช้ไปแล้ว
+ผู้ใช้จะรู้ทันทีโดยไม่ต้องกรอกรหัสใหม่ก่อน ทั้งสองข้อ merge เข้า `dev` เมื่อ 2026-11-13 เช่นกัน
