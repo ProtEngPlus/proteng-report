@@ -29,7 +29,6 @@ ProtEngPlus เป็นเว็บแอปสำหรับงาน protein
 | กลุ่ม | ใช้ระบบทำอะไร | หลักฐาน |
 | --- | --- | --- |
 | นักวิจัยด้าน protein engineering | สร้าง job, อัปโหลดผลแล็บ, ดู mutant ที่ระบบเสนอพร้อม predicted assay score แล้วเลือกไปทดลองจริง | หน้าเว็บทั้ง 13 หน้าใน `protengplus-frontend/src/pages/` |
-| ผู้ดูแลระบบ (admin) | ดูและจัดการบัญชีผู้ใช้ | route `/admins/*` และ `/auth/login/admin` ใน proteng-bff |
 | อาจารย์ที่ปรึกษาและเจ้าของ cloud project | เป็นเจ้าของ VM และ GCP project ที่ระบบรันอยู่ และเป็นผู้ให้ requirement ของ feature ชุดใหม่ | `manual-guides-2023/reference/vms.md`, `resources-2026/plan/feature-details.md` |
 | ห้องแล็บปลายทาง (BIOTEC) | เป็นผู้ใช้จริงที่ requirement ตั้งต้นของรุ่นก่อนอ้างถึง | proposal ของรุ่นก่อนใน `resources-2023/` |
 
@@ -85,7 +84,7 @@ job จะหยุดรอให้ผู้ใช้สั่งเองร�
 
 ## 5. โครงสร้างข้อมูล
 
-ข้อมูลเก็บใน MongoDB แยกเป็น 13 collection ตามที่ปรากฏในโค้ดของ proteng-conductor
+ข้อมูลเก็บใน MongoDB แยกเป็น 12 collection ตามที่ปรากฏในโค้ดของ proteng-conductor
 และ proteng-user-mgmt
 
 | collection | ของ service | เก็บอะไร |
@@ -100,7 +99,6 @@ job จะหยุดรอให้ผู้ใช้สั่งเองร�
 | `assay_types` | conductor | ชนิดของ assay ที่ผู้ใช้นิยามเอง |
 | `configurations` | conductor | ชุดพารามิเตอร์ที่บันทึกไว้เพื่อสร้าง job ใหม่โดยอ้างอิง job เดิม |
 | `users` | user-mgmt | บัญชีผู้ใช้ พร้อม token ยืนยันอีเมล |
-| `admins` | user-mgmt | บัญชีผู้ดูแล |
 | `refresh_tokens` | user-mgmt | refresh token ของ session ที่ยังใช้ได้ |
 | `auth_attempts` | user-mgmt | จำนวนครั้งที่ล็อกอินหรือยืนยันรหัสผ่านผิดต่อหนึ่งบัญชี และเวลาที่ถูกล็อกไว้ถึง |
 
@@ -109,24 +107,21 @@ job จะหยุดรอให้ผู้ใช้สั่งเองร�
 
 ## 6. API
 
-proteng-bff เป็นประตูเดียวที่หน้าเว็บเรียก และมี route ทั้งหมด 64 เส้นใน `apis/router.go`
+proteng-bff เป็นประตูเดียวที่หน้าเว็บเรียก และมี route ทั้งหมด 54 เส้นใน `apis/router.go`
 แบ่งเป็นสองกลุ่มตาม service ปลายทาง คือ `/proteng-user-mgmt/*` และ `/proteng-conductor/*`
 Swagger ของ bff จึงเป็นเอกสาร API ของทั้งระบบ
 
 กลุ่มงานของ route มีดังนี้ บัญชีผู้ใช้และการยืนยันตัวตน (register, login, refresh, logout,
 forgot password, ตรวจว่าลิงก์ reset ยังใช้ได้, reset password, change password, send verification,
-verify email), การจัดการ
-ผู้ใช้และผู้ดูแลสำหรับ admin, job (สร้าง แก้ ลบ สั่งรัน และ dashboard), configuration ที่บันทึกไว้,
+verify email), job (สร้าง แก้ ลบ สั่งรัน และ dashboard), configuration ที่บันทึกไว้,
 mutation และผลของ mutation รวมถึงการ bookmark และ export, experimental result สำหรับผลแล็บจริง,
 assay type กับ Assay Library, evaluation plugin กับ evaluation run, การดาวน์โหลด artifact
 และการดึง sequence จาก UniProt ด้วย UniProt ID
 
 ทุก route ต้องผ่าน `Authenticate()` และเกือบทุกเส้นผ่าน `Authorize(...)` ด้วย ส่วน route ของบัญชีตัวเอง
 (`/me` และ change password) ผ่านแค่ `Authenticate()` route ที่ไม่ต้องล็อกอินมีเฉพาะเส้นที่ต้องใช้งานได้ก่อน
-มี session คือ register, login ทั้งของผู้ใช้และ admin, refresh, logout, forgot password,
-ตรวจลิงก์ reset, reset password, send verification และ verify email มีข้อยกเว้นหนึ่งจุดที่เป็นช่องโหว่ที่รู้อยู่
-คือ `POST /proteng-user-mgmt/admins` ซึ่งยังเปิดอยู่ ดู [work-progress.md](./work-progress.md)
-หัวข้อช่องโหว่ที่ยังไม่ได้ปิด
+มี session คือ register, login, refresh, logout, forgot password,
+ตรวจลิงก์ reset, reset password, send verification และ verify email
 
 ## 7. การยืนยันตัวตน
 
@@ -144,7 +139,7 @@ assay type กับ Assay Library, evaluation plugin กับ evaluation run, 
 ตอน release รอบถัดไป ตัวเลขที่ตั้งไว้จริงอยู่ใน Sealed Secret จึงอ่านจาก repo ไม่ได้
 ถ้ารายงานต้องใช้ค่านี้ให้ถามทีมก่อน
 
-การป้องกันการเดารหัสผ่าน (BLB25) merge เข้า `dev` เมื่อ 2026-11-13 คือ login ของผู้ใช้, login ของ admin
+การป้องกันการเดารหัสผ่าน (BLB25) merge เข้า `dev` เมื่อ 2026-11-13 คือ login ของผู้ใช้
 และ change password นับจำนวนครั้งที่กรอกผิดแยกตามบัญชีไว้ใน collection `auth_attempts` ผิดครบ 5 ครั้ง
 บัญชีนั้นจะถูกล็อกการลองใหม่ 15 นาที โดยระบบตอบ HTTP 429 พร้อมบอกจำนวนวินาทีที่ต้องรอ และตัวนับจะถูกล้าง
 เมื่อกรอกถูก ส่วน forgot password กับการส่งอีเมลยืนยันซ้ำใช้ cooldown 60 วินาทีต่อบัญชีแทน

@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | frontend | React, TypeScript, Vite, Tailwind, MUI | หน้าเว็บทั้งหมด คุยกับ bff เท่านั้น |
 | proteng-bff | Go, Gin | API gateway ตรวจ JWT และ role แล้ว forward ต่อ ไม่มีฐานข้อมูลและไม่ต่อ RabbitMQ เป็นที่อยู่ของ Swagger ของทั้งระบบ |
-| proteng-user-mgmt | Go, Gin, MongoDB, RabbitMQ | บัญชีผู้ใช้ ยืนยันอีเมล ออก JWT จัดการรหัสผ่าน บัญชี admin และส่งอีเมลแจ้งสถานะงาน |
+| proteng-user-mgmt | Go, Gin, MongoDB, RabbitMQ | บัญชีผู้ใช้ ยืนยันอีเมล ออก JWT จัดการรหัสผ่าน และส่งอีเมลแจ้งสถานะงาน |
 | proteng-conductor | Go, Gin, MongoDB, RabbitMQ | ขับ pipeline ทีละ stage เก็บสถานะของ job, mutation, query result และ evaluation |
 | ML service | Python 3.10 | หนึ่ง service ต่อหนึ่งขั้นตอนของ pipeline ทุกตัวเป็น RabbitMQ consumer |
 
