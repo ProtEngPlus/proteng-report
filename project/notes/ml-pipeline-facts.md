@@ -2,22 +2,29 @@
 
 บันทึกนี้ลงรายละเอียดของแต่ละขั้นตอนใน pipeline ว่าใช้วิธีไหน ต้องการ input อะไร คืนอะไร
 และใช้เวลาเท่าไร ตรวจกับโค้ดบน branch `dev` ของ `proteng-kubeflow` และ `proteng-conductor`
-เมื่อ 2026-11-10
+เมื่อ 2026-11-15
 
 ML service ทุกตัวอยู่ใน repo `proteng-kubeflow` โดยหนึ่ง service คือหนึ่งโฟลเดอร์ใน `projects/`
 ชื่อ repo เป็นชื่อตามประวัติ ปัจจุบันไม่มีส่วนใดใช้ Kubeflow แล้ว
 
 ## 1. รูปแบบร่วมของทุก service
 
-ทุก service เป็น RabbitMQ consumer ที่ไม่มี HTTP port รับเข้า การทำงานหนึ่งรอบเป็นแบบนี้
+ทุก service ที่ใช้งานจริงเป็น RabbitMQ consumer ที่ไม่มี HTTP port รับเข้า แต่ละโฟลเดอร์ยังมีไฟล์
+`microservice.py` ซึ่งเป็น FastAPI ของรุ่นก่อนที่เปิดเป็น REST endpoint ติดมาด้วย ไฟล์นี้ไม่ได้ถูก
+เรียกใช้แล้ว เพราะ `run.sh` ของทุก service รัน `consumer.py` และ Deployment ชื่อ `ml-*-rest`
+ในคลัสเตอร์ถูกตั้งไว้ที่ศูนย์ replica ตั้งแต่ 2026-11-13 ทั้งสอง environment
+
+การทำงานหนึ่งรอบเป็นแบบนี้
 `proteng-conductor` publish message ของ stage ปัจจุบันเข้า topic exchange ชื่อ `logs_topic`
 ด้วย routing key รูปแบบ `<stage>.<tool>` เช่น `query.mmseqs2` หรือ `mutation.mutation`
 consumer ของ stage นั้นรับ message จาก queue ของตัวเอง รันงานใน thread แยก อ่านและเขียน artifact
 ใน Google Cloud Storage แล้ว publish ผลกลับเข้า queue ชื่อ `job_status_event` ซึ่ง conductor
 เป็นผู้อ่านและตัดสินว่าจะเดิน stage ถัดไปหรือจบงาน
 
-ผลของแต่ละ stage เดินทางผ่าน RabbitMQ และ GCS เท่านั้น conductor ไม่แตะ GCS เลย
-มีเพียง ML consumer และปุ่มดาวน์โหลดบนหน้าเว็บที่อ่านหรือเขียน artifact
+ผลของแต่ละ stage เดินทางผ่าน RabbitMQ และ GCS เท่านั้น ฝ่ายที่เขียน artifact ลง GCS คือ ML consumer
+เท่านั้น ส่วน conductor อ่าน GCS ได้อย่างเดียวและใช้เฉพาะตอนผู้ใช้กดดาวน์โหลด โดย `storage_service.go`
+มีเมธอดเดียวคือ `GetObjectContent` ที่ route ดาวน์โหลด artifact เรียกใช้ จึงไม่มีทางที่ conductor
+จะเขียนทับผลของ stage ใดได้
 
 การเพิ่มเครื่องมือใหม่ให้ขั้นตอนใดก็ตามจึงทำได้โดยเพิ่ม consumer ที่ผูกกับ routing key ใหม่
 ไม่ต้องแก้ state machine หลักของ conductor ซึ่งเป็นคุณสมบัติที่ออกแบบงาน evaluation plugin
@@ -28,8 +35,12 @@ consumer ของ stage นั้นรับ message จาก queue ของ
 ขั้นตอนนี้หา homolog คือโปรตีนที่มีลำดับใกล้เคียงกับ sequence ตั้งต้น เพื่อใช้เป็นข้อมูลให้
 ขั้นตอนถัดไปปรับโมเดลภาษาโปรตีน ผู้ใช้เลือกได้สองเครื่องมือ
 
-**blast** เรียก NCBI BLAST ผ่าน Biopython ด้วย `NCBIWWW.qblast` ข้อดีคือผลตรงกับเว็บของ NCBI
-และฐานข้อมูลใหญ่ ข้อเสียคือเวลาไม่คงที่และควบคุมจากฝั่งเราไม่ได้เลย ทีมวัดเวลาจริง 15 รอบ
+**blast** เรียก NCBI BLAST ผ่าน HTTP โดยตรงที่ `Blast.cgi` ด้วย client ที่ทีมเขียนเองใน
+`src/service/ncbi_blast.py` แทน `NCBIWWW.qblast` ของ Biopython ที่ใช้เดิม เพราะต้องคุมเวลาเองได้
+client ตัวนี้ส่งคำสั่ง Put เพื่อขอ request id แล้ว poll สถานะทุก 60 วินาที เว้นระยะระหว่าง request
+10 วินาทีตามกติกาของ NCBI ระบุตัวตนด้วย tool กับ email และยอมให้ poll ล้มเหลวติดกันได้ไม่เกิน 3 ครั้ง
+ข้อดีของเครื่องมือนี้คือผลตรงกับเว็บของ NCBI และฐานข้อมูลใหญ่ ข้อเสียคือเวลาไม่คงที่และควบคุมจากฝั่งเรา
+ไม่ได้เลย ทีมวัดเวลาจริง 15 รอบ
 เมื่อ 2026-08-31 ด้วย query และพารามิเตอร์ชุดเดียวกันทุกครั้ง ได้ผลตามตารางนี้
 
 | สถิติ | นาที |
@@ -41,6 +52,15 @@ consumer ของ stage นั้นรับ message จาก queue ของ
 
 การกระจายเบ้ขวา มี 6 รอบจาก 15 รอบที่เกินครึ่งชั่วโมง และช่วงเวลาของวันมีผลชัดเจน สรุปที่ใช้
 อ้างในรายงานได้คือ BLAST ผ่าน NCBI ใช้ทำ SLA หรือการสาธิตที่ต้องการเวลาแน่นอนไม่ได้
+
+เพราะเวลาไม่แน่นอนนี้ งานที่ merge เข้า `dev` เมื่อ 2026-11-13 จึงกำหนดเพดานเวลาให้ขั้นตอนนี้
+ค่าเริ่มต้นคือ 90 นาที ปรับได้ด้วย environment variable `BLAST_DEADLINE_MINUTES` เมื่อครบเวลาแล้ว
+ผลยังไม่พร้อม service จะเลิกรอและทำให้ job นั้น fail พร้อมบอกสาเหตุ แทนที่จะค้างเป็น Ongoing ไปเรื่อย ๆ
+อย่างที่เคยเป็น ข้อแลกเปลี่ยนที่พบจากการใช้งานจริงคือการค้นฐาน nr ทั้งก้อนมักไม่จบใน 90 นาที
+job ที่เลือก nr จึงมักไปจบที่ fail เมื่อครบเพดาน ทางแก้ที่ทำต่อคือเปลี่ยนค่าเริ่มต้นของฐานข้อมูล
+บนหน้าเว็บเป็น ClusteredNR (`nr_cluster_seq`) ซึ่งรวมโปรตีนที่เหมือนกันเกิน 90 เปอร์เซ็นต์
+ให้เหลือตัวแทนเดียว จึงค้นเสร็จเร็วกว่าฐาน nr อย่างชัดเจน ผู้ใช้ยังเลือก nr เองได้
+ส่วนการจะใช้ ClusteredNR เป็นค่าเริ่มต้นถาวรหรือไม่ยังรอทีมตัดสินใจ [TBD]
 
 **mmseqs2** รันโปรแกรม MMseqs2 บนเครื่องของทีมเองกับฐาน Swiss-Prot ซึ่งเก็บเป็นไฟล์ FASTA
 ขนาดประมาณ 286 MB ใน repo ด้วย Git LFS เวลาที่ใช้อยู่ในระดับไม่กี่นาทีและคาดเดาได้
@@ -117,7 +137,8 @@ regularization ด้วย cross-validation
 ฝั่งหน้าเว็บมีการเลือก plugin ตอนสร้าง job, การสั่งรันรอบใหม่จากหน้า JobDetail, การแสดง run
 กับผลลัพธ์ และการแสดงขั้นตอนนี้บน dashboard
 
-สิ่งที่ยังไม่มีคือ plugin จริง ปัจจุบันมีเพียง `evaluation_mock` ซึ่งเป็น consumer ที่ใช้ทดสอบ
+สิ่งที่ยังไม่มีคือ plugin จริง ปัจจุบันมีเพียง `evaluation_mock` ที่ผูกกับ routing key
+`evaluation.mock` ซึ่งเป็น consumer ที่ใช้ทดสอบ
 เส้นทางของ message ส่วน plugin ที่วางแผนไว้คือ stability ที่ทำนายค่า ΔΔG เทียบกับ wild-type
 และ kcat ที่ใช้โมเดล DLKcat ซึ่งต้องรับ substrate เป็น SMILES เพิ่มเข้ามาเป็น input ใหม่
 ทั้งสองยังไม่ได้ลงมือ
@@ -130,7 +151,9 @@ input ของแต่ละ stage คือ output ของ stage ก่อ�
 query (blast หรือ mmseqs2) -> similar_protein -> evotune -> unirep -> fittop -> ridgecv -> mutation -> mutation
 ```
 
-ชื่อหลังลูกศรคือชื่อ bucket ใน GCS ที่เก็บผลของ stage นั้น ตอนรันบนเครื่อง local ทีมใช้
+ชื่อหลังลูกศรคือชื่อ bucket ใน GCS ที่เก็บผลของ stage นั้น ชื่อ bucket ผูกกับ stage ไม่ได้ผูกกับ
+เครื่องมือ ดังนั้น evotune ที่ใช้ ESM ก็เขียนลง bucket ชื่อ `unirep` เหมือนกับตัวที่ใช้ Unirep
+และ blast กับ mmseqs2 ก็เขียนลง `similar_protein` ตัวเดียวกัน ตอนรันบนเครื่อง local ทีมใช้
 GCS emulator ที่เตรียม bucket ทั้งสี่ไว้ให้ จึงรัน pipeline เต็มได้โดยไม่ต้องมี credential
 ของ GCP จริง
 
