@@ -4,7 +4,7 @@ Every deliverable (proposal, slides, progress updates, final report) reads
 these facts from here. Change a fact here first, then update the deliverables.
 Thai notes are fine; Claude turns them into English when writing reports.
 
-ค่าที่กรอกไว้ด้านล่างมาจากการตรวจโค้ดจริงของ repo ทั้งแปดตัวและเอกสารของทีมเมื่อ 2026-11-10
+ค่าที่กรอกไว้ด้านล่างมาจากการตรวจโค้ดจริงของ repo ทั้งแปดตัวและเอกสารของทีมเมื่อ 2026-11-15
 ข้อที่ยังไม่มีแหล่งยืนยันคงไว้เป็น `[TBD]` รายละเอียดที่ยาวกว่านี้อยู่ใน `notes/` ได้แก่
 `system-facts.md` (ระบบคืออะไร ทำอะไรได้ โครงสร้างข้อมูล API), `ml-pipeline-facts.md`
 (แต่ละขั้นตอนใช้วิธีไหน ใช้เวลาเท่าไร), `architecture-facts.md` (service, repo, การ deploy,
@@ -21,13 +21,13 @@ Thai notes are fine; Claude turns them into English when writing reports.
 ## Team (3–5)
 | Name (TH) | Student ID | Role |
 |---|---|---|
-| [TBD] | [TBD] | Infrastructure, DevOps, CI/CD, เอกสาร, auth และ production-readiness (git: BadLuckZ, 424 commit) |
+| [TBD] | [TBD] | Infrastructure, DevOps, CI/CD, เอกสาร, auth และ production-readiness (git: BadLuckZ, 431 commit) |
 | [TBD] | [TBD] | Evaluation plugin architecture (BLX1) และงาน conductor กับ frontend (git: art1722, 61 commit) |
 | [TBD] | [TBD] | คุมช่วงตำแหน่งที่ mutate ได้ (BLF1) และงาน ML service (git: Napongthorn, 13 commit) |
 | [TBD] | [TBD] | Wet-lab result loop (BLF7) และงาน frontend (git: poongeta, 10 commit) |
 
-จำนวน commit นับจาก 2026-08-01 ถึง 2026-11-10 ไม่รวม merge commit การจับคู่ชื่อเล่นในแผนงาน
-(Art, Gong, Poon) กับ git handle เป็นการอนุมาน [unverified] ดู `notes/team-and-process.md`
+จำนวน commit นับจาก 2026-08-01 ถึง 2026-11-15 ทุก branch ไม่รวม merge commit การจับคู่ชื่อเล่น
+ในแผนงาน (Art, Gong, Poon) กับ git handle ยืนยันกับทีมแล้ว ดู `notes/team-and-process.md`
 
 ## Advisors
 - Main advisor: [TBD — เป็นเจ้าของ GCE instance และ GCP project ที่ระบบรันอยู่ และเป็นผู้ให้
@@ -77,7 +77,7 @@ Thai notes are fine; Claude turns them into English when writing reports.
 - Out of scope / limitations: ไม่ได้ออกแบบระบบใหม่จากศูนย์, ไม่ทำโหมดที่ใช้โครงสร้างสามมิติ
   ของโปรตีนในการประเมินความเสถียร, ไม่ได้ย้ายไปใช้ cluster หลาย node หรือบริการ Kubernetes
   ของ cloud, ไม่ควบคุมเวลาของ NCBI BLAST ซึ่งเป็นบริการภายนอก, ไม่มีการทดลองใน wet lab
-  โดยทีมเอง และ ณ 2026-11-10 ยังไม่มีผู้ใช้จริงนอกทีม
+  โดยทีมเอง และ ณ 2026-11-15 ยังไม่มีผู้ใช้จริงนอกทีม
 
 ## Solution idea
 - Approach in 2–3 sentences: ระบบรับ protein sequence ตั้งต้นกับผลแล็บจำนวนน้อย แล้วเดินงาน
@@ -90,8 +90,9 @@ Thai notes are fine; Claude turns them into English when writing reports.
   ต่อหนึ่งขั้นตอน, RabbitMQ เป็น message bus, MongoDB เป็นฐานข้อมูลหลัก, Google Cloud Storage
   เก็บ artifact ขนาดใหญ่, Kubernetes หนึ่ง cluster สำหรับ dev และ production
   และ GPU VM อีกเครื่องสำหรับงาน ML ที่ต่อกลับมาผ่าน SSH tunnel
-- Tech stack: ฝั่ง backend เป็น Go 1.22 กับ Gin 1.9.1 (bff, conductor, user-mgmt) ใช้
-  mongo-driver 1.12.1 และ amqp091-go 1.9.0 ฝั่งหน้าเว็บเป็น React 18.3.1 กับ TypeScript 5.5.3
+- Tech stack: ฝั่ง backend เป็น Go 1.22 กับ Gin 1.9.1 (bff, conductor, user-mgmt) โดย conductor
+  ใช้ mongo-driver 1.12.1 กับ amqp091-go 1.9.0 และ user-mgmt ใช้รุ่นใหม่กว่าคือ 1.13.1 กับ 1.10.0
+  ฝั่งหน้าเว็บเป็น React 18.3.1 กับ TypeScript 5.5.3
   บน Vite 5.4.8 ใช้ Tailwind 3.4.14, MUI 6.1.4, axios 1.7.7 และ react-apexcharts 1.7.0
   ฝั่ง ML เป็น Python 3.10.12 ใช้ jax-unirep 2.2.0 กับ jax 0.6.0 สำหรับ Unirep,
   transformers 4.39.3 กับ torch 2 ขึ้นไปและ fair-esm 2.0.0 สำหรับ ESM,
@@ -105,3 +106,9 @@ Thai notes are fine; Claude turns them into English when writing reports.
 | Date | Fact | Old → New | Why |
 |---|---|---|---|
 | 2026-11-10 | ข้อเท็จจริงของระบบทั้งหมด | ว่างทั้งไฟล์ → กรอกจากโค้ดจริงและเอกสารของทีม | เริ่มเขียน proposal จึงต้องมีฐานข้อเท็จจริงที่ทุก deliverable อ้างได้ |
+| 2026-11-15 | การจำกัดการเดารหัสผ่าน (BLB25) | ยังไม่ลงมือ → merge เข้า `dev` แล้ว ล็อกบัญชี 15 นาทีเมื่อกรอกผิดครบ 5 ครั้ง | งานเสร็จและมีผลกับหัวข้อ objective ข้อ 3 |
+| 2026-11-15 | เพดานเวลาของการค้น BLAST | ไม่มีเพดาน ค้างได้ไม่จำกัด → 90 นาทีแล้วให้ job fail พร้อมสาเหตุ | เลิกใช้ `qblast` ของ Biopython มาเขียน client เองเพื่อคุมเวลา |
+| 2026-11-15 | ฐานข้อมูลเริ่มต้นของ BLAST | `nr` → `nr_cluster_seq` (ClusteredNR) บน `dev` | ฐาน nr มักค้นไม่จบใน 90 นาที job จึงไปจบที่ fail |
+| 2026-11-15 | จำนวน route ของ API และ collection | 63 route, 12 collection → 64 route, 13 collection | เพิ่ม route ตรวจลิงก์ reset และ collection `auth_attempts` |
+| 2026-11-15 | อายุ access token ของ dev | 24 ชั่วโมง → 15 นาที | ลดผลกระทบเมื่อ token รั่ว production รอ release |
+| 2026-11-15 | Deployment `ml-*-rest` | ยังรันอยู่โดยไม่มีใครเรียก → ศูนย์ replica ทั้งสอง environment | image ที่สะสมทำให้ disk ของ VM หลักเต็มจน MongoDB ล่ม 6.5 นาที |
