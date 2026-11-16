@@ -116,6 +116,18 @@ Status values: Not started / Drafting / Review / Done
 
 ## 6. Decisions (do not change without asking)
 - Reference style: IEEE
+- (2026-11-16) The three objectives in `project/overview.md` are confirmed. Use that wording
+  everywhere; do not restate or renumber them inside a section.
+- (2026-11-16) Work status per backlog item comes from `project/notes/backlog-status.md`.
+  Section 5 may use only the rows marked as finished and Section 6 only the rows marked as not
+  done. Never turn an objective into planned work without checking that register first.
+- (2026-11-16) Section 6 has two columns, Objective and Planned work. There is no Owner column
+  and no Success measure column: the template asks only for the major tasks and milestones of
+  Semester 2, the success measures live inside each objective, and responsibility is covered
+  by 4.3.
+- (2026-11-16) Operational details (IP addresses, NodePorts, tunnel ports, machine names, paths
+  on the machines) stay out of this proposal, because it is submitted to the department and goes
+  through Turnitin. Describe machines by role, such as the main VM and the GPU VM.
 
 ## 7. Next steps
 1. (by Nov 12) Read `project/overview.md` and `midterm_proposal/docs/`; check section 4.
@@ -123,7 +135,16 @@ Status values: Not started / Drafting / Review / Done
 3. (Nov 13–16) Draft 1.1 Background & Motivation and 1.2 Problem Statement.
 
 ## 8. Open questions / [TBD] / [CITATION NEEDED]
-- (none yet)
+- The grading criteria are not in `docs/`; only the template is. Any claim about how sections
+  are scored cannot be checked against this repo until the criteria are added.
+- The BLB codes are not in this repo. `project/notes/backlog-status.md` names the
+  production-readiness items in words instead, and the codes must be copied from
+  `bug-details.md` in the team's private repo before a section cites them.
+- Ownership checks on API routes were cut from objective 3 on 2026-11-16 because nothing in the
+  repo records that work. Reinstate only with a source.
+- Owners for the Semester 2 work are not assigned; the team has not agreed the split yet.
+- The citation marked in `project/overview.md` under "Why it matters" still needs the UniRep
+  paper and the work on low-N protein engineering.
 
 ## 9. Session log (newest on top)
 ### YYYY-MM-DD — VS Code / iPad
